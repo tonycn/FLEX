@@ -40,4 +40,7 @@
 
 - (void)explorerViewControllerDidFinish:(FLEXExplorerViewController *)explorerViewController;
 
+- (void)explorerViewController:(FLEXExplorerViewController *)explorerViewController tapView:(UIView *)view;
+
+
 @end

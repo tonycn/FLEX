@@ -36,6 +36,10 @@
 /// Users of the toolbar can configure the event targets/actions.
 @property (nonatomic, strong, readonly) FLEXToolbarItem *closeItem;
 
+/// Toolbar item for tap the select view.
+/// Users of the toolbar can configure the event targets/actions.
+@property (nonatomic, strong, readonly) FLEXToolbarItem *tapItem;
+
 /// A view for moving the entire toolbar.
 /// Users of the toolbar can attach a pan gesture recognizer to decide how to reposition the toolbar.
 @property (nonatomic, strong, readonly) UIView *dragHandle;

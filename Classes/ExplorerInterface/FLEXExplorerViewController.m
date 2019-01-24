@@ -95,7 +95,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     [super viewDidLoad];
 	
     // Toolbar
-    self.explorerToolbar = [[FLEXExplorerToolbar alloc] init];
+    self.explorerToolbar = [[FLEXExplorerToolbar alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 0)];
 
     // Start the toolbar off below any bars that may be at the top of the view.
     id toolbarOriginYDefault = [[NSUserDefaults standardUserDefaults] objectForKey:kFLEXToolbarTopMarginDefaultsKey];
@@ -368,6 +368,7 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     [self.explorerToolbar.moveItem addTarget:self action:@selector(moveButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.explorerToolbar.globalsItem addTarget:self action:@selector(globalsButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
     [self.explorerToolbar.closeItem addTarget:self action:@selector(closeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    [self.explorerToolbar.tapItem addTarget:self action:@selector(tapButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)selectButtonTapped:(FLEXToolbarItem *)sender
@@ -415,11 +416,19 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
     [self.delegate explorerViewControllerDidFinish:self];
 }
 
+- (void)tapButtonTapped:(FLEXToolbarItem *)sender
+{
+    [self.delegate explorerViewController:self tapView:self.selectedView];
+    self.selectedView = nil;
+    [self updateButtonStates];
+}
+
 - (void)updateButtonStates
 {
     // Move and details only active when an object is selected.
     BOOL hasSelectedObject = self.selectedView != nil;
     self.explorerToolbar.moveItem.enabled = hasSelectedObject;
+    self.explorerToolbar.tapItem.enabled = hasSelectedObject;
     self.explorerToolbar.selectItem.selected = self.currentMode == FLEXExplorerModeSelect;
     self.explorerToolbar.moveItem.selected = self.currentMode == FLEXExplorerModeMove;
 }

@@ -11,6 +11,8 @@
 #import "FLEXResources.h"
 #import "FLEXUtility.h"
 
+static const NSInteger kItemsInRow = 5;
+
 @interface FLEXExplorerToolbar ()
 
 @property (nonatomic, strong, readwrite) FLEXToolbarItem *selectItem;
@@ -18,6 +20,10 @@
 @property (nonatomic, strong, readwrite) FLEXToolbarItem *globalsItem;
 @property (nonatomic, strong, readwrite) FLEXToolbarItem *closeItem;
 @property (nonatomic, strong, readwrite) FLEXToolbarItem *hierarchyItem;
+
+@property (nonatomic, strong, readwrite) FLEXToolbarItem *tapItem;
+
+
 @property (nonatomic, strong, readwrite) UIView *dragHandle;
 
 @property (nonatomic, strong) UIImageView *dragHandleImageView;
@@ -63,6 +69,10 @@
         
         UIImage *closeIcon = [FLEXResources closeIcon];
         self.closeItem = [FLEXToolbarItem toolbarItemWithTitle:@"close" image:closeIcon];
+        
+        NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+        UIImage *tapIcon = [UIImage imageNamed:@"tap" inBundle:bundle compatibleWithTraitCollection:nil];
+        self.tapItem = [FLEXToolbarItem toolbarItemWithTitle:@"tap" image:tapIcon];
 
         self.selectedViewDescriptionContainer = [[UIView alloc] init];
         self.selectedViewDescriptionContainer.backgroundColor = [UIColor colorWithWhite:0.9 alpha:0.95];
@@ -82,7 +92,7 @@
         self.selectedViewDescriptionLabel.font = [[self class] descriptionLabelFont];
         [self.selectedViewDescriptionSafeAreaContainer addSubview:self.selectedViewDescriptionLabel];
         
-        self.toolbarItems = @[_globalsItem, _hierarchyItem, _selectItem, _moveItem, _closeItem];
+        self.toolbarItems = @[_globalsItem, _hierarchyItem, _selectItem, _moveItem, _closeItem, _tapItem];
     }
         
     return self;
@@ -91,7 +101,6 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-
 
     CGRect safeArea = [self safeArea];
     // Drag Handle
@@ -107,19 +116,19 @@
     CGFloat originX = CGRectGetMaxX(self.dragHandle.frame);
     CGFloat originY = CGRectGetMinY(safeArea);
     CGFloat height = kToolbarItemHeight;
-    CGFloat width = FLEXFloor((CGRectGetWidth(safeArea) - CGRectGetWidth(self.dragHandle.frame)) / [self.toolbarItems count]);
-    for (UIView *toolbarItem in self.toolbarItems) {
-        toolbarItem.frame = CGRectMake(originX, originY, width, height);
+    CGFloat width = FLEXFloor((CGRectGetWidth(safeArea) - CGRectGetWidth(self.dragHandle.frame)) / kItemsInRow);
+    for (NSInteger i = 0; i < self.toolbarItems.count; ++i) {
+        if (i % kItemsInRow == 0) {
+            originX = CGRectGetMaxX(self.dragHandle.frame);;
+        }
+        UIView *toolbarItem = self.toolbarItems[i];
+        CGFloat y = originY + (i/kItemsInRow)*height;
+        toolbarItem.frame = CGRectMake(originX, y, width, height);
         originX = CGRectGetMaxX(toolbarItem.frame);
     }
     
-    // Make sure the last toolbar item goes to the edge to account for any accumulated rounding effects.
-    UIView *lastToolbarItem = [self.toolbarItems lastObject];
-    CGRect lastToolbarItemFrame = lastToolbarItem.frame;
-    lastToolbarItemFrame.size.width = CGRectGetMaxX(safeArea) - lastToolbarItemFrame.origin.x;
-    lastToolbarItem.frame = lastToolbarItemFrame;
-
-    self.backgroundView.frame = CGRectMake(0, 0, CGRectGetWidth(self.bounds), kToolbarItemHeight);
+    self.backgroundView.frame = self.bounds;
+    self.backgroundView.autoresizingMask = ~UIViewAutoresizingNone;
     
     const CGFloat kSelectedViewColorDiameter = [[self class] selectedViewColorIndicatorDiameter];
     const CGFloat kDescriptionLabelHeight = [[self class] descriptionLabelHeight];
@@ -173,11 +182,6 @@
         [item removeFromSuperview];
     }
     
-    // Trim to 5 items if necessary
-    if (toolbarItems.count > 5) {
-        toolbarItems = [toolbarItems subarrayWithRange:NSMakeRange(0, 5)];
-    }
-
     for (FLEXToolbarItem *item in toolbarItems) {
         [self addSubview:item];
     }
@@ -253,7 +257,7 @@
 - (CGSize)sizeThatFits:(CGSize)size
 {
     CGFloat height = 0.0;
-    height += [[self class] toolbarItemHeight];
+    height += [[self class] toolbarItemHeight] * ceilf(self.toolbarItems.count*1.0 / kItemsInRow) ;
     height += [[self class] descriptionContainerHeight];
     return CGSizeMake(size.width, height);
 }
