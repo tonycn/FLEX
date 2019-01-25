@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+#import "FLEXExplorerViewController.h"
+
 typedef UIViewController *(^FLEXCustomContentViewerFuture)(NSData *data);
 
 @interface FLEXManager : NSObject
@@ -16,6 +18,7 @@ typedef UIViewController *(^FLEXCustomContentViewerFuture)(NSData *data);
 + (instancetype)sharedManager;
 
 @property (nonatomic, readonly) BOOL isHidden;
+@property (nonatomic, weak) id <FLEXExplorerViewControllerDelegate> explorerDelegate;
 
 - (void)showExplorer;
 - (void)hideExplorer;

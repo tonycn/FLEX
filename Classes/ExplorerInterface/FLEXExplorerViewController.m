@@ -418,8 +418,10 @@ typedef NS_ENUM(NSUInteger, FLEXExplorerMode) {
 
 - (void)tapButtonTapped:(FLEXToolbarItem *)sender
 {
-    [self.delegate explorerViewController:self tapView:self.selectedView];
-    self.selectedView = nil;
+    if (self.selectedView != nil) {
+        [self.delegate explorerViewController:self tapView:self.selectedView];
+        self.selectedView = nil;
+    }
     [self updateButtonStates];
 }
 

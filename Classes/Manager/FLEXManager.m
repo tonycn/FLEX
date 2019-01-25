@@ -147,12 +147,13 @@
 - (void)explorerViewControllerDidFinish:(FLEXExplorerViewController *)explorerViewController
 {
     [self hideExplorer];
+    [self.explorerDelegate explorerViewControllerDidFinish:explorerViewController];
 }
 
 - (void)explorerViewController:(FLEXExplorerViewController *)explorerViewController
                        tapView:(UIView *)view
 {
-    
+    [self.explorerDelegate explorerViewController:explorerViewController tapView:view];
 }
 
 #pragma mark - Simulator Shortcuts

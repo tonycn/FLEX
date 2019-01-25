@@ -35,5 +35,7 @@ Pod::Spec.new do |spec|
   spec.frameworks       = [ "Foundation", "UIKit", "CoreGraphics" ]
   spec.libraries        = [ "z", "sqlite3" ]
   spec.requires_arc     = true
-  spec.public_header_files = [ "Classes/**/FLEXManager.h", "Classes/FLEX.h" ]
+  spec.public_header_files = [ "Classes/**/FLEXManager.h", "Classes/FLEX.h", "Classes/**/FLEXExplorerViewController.h" ]
+  
+  spec.resources = ['Resources/*.png']
 end
