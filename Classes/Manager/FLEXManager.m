@@ -155,7 +155,6 @@
     
 }
 
-
 #pragma mark - Simulator Shortcuts
 
 - (void)registerSimulatorShortcutWithKey:(NSString *)key modifiers:(UIKeyModifierFlags)modifiers action:(dispatch_block_t)action description:(NSString *)description
